@@ -1,0 +1,483 @@
+import 'package:flutter/material.dart';
+
+import 'package:pharmacy/pages/login_page.dart';
+import 'package:pharmacy/responsive/dimensions.dart';
+
+import 'package:pharmacy/views/products/products_list.dart';
+import 'package:pharmacy/views/selling/selling_form.dart';
+import 'package:pharmacy/views/selling_points/displayList.dart';
+import 'package:pharmacy/views/users/users_list.dart';
+
+class Home extends StatefulWidget {
+  Widget desktopHome(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      decoration: const BoxDecoration(
+        color: Colors.blue,
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.blue.withOpacity(0),
+        //     spreadRadius: 2,
+        //     blurRadius: 5,
+        //     offset: const Offset(0, 2),
+        //   )
+        // ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0, right: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'YEREMIYA PHARMACY',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: Colors.white),
+            ),
+            Row(
+              children: [
+                _navButton(
+                    context,
+                    'Products',
+                    () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProductsList()))),
+                const SizedBox(width: 10),
+                _navButton(
+                    context,
+                    'Sells',
+                    () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SellingForm()))),
+                const SizedBox(width: 10),
+                _navButton(
+                    context,
+                    'Users',
+                    () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UsersList()))),
+                const SizedBox(width: 10),
+                _navButton(
+                    context,
+                    'Selling Points',
+                    () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SellingPointsList()))),
+                const SizedBox(width: 10),
+                _navButton(context, 'Logout', () {},
+                    color: Colors.red.shade400),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _navButton(BuildContext context, String text, VoidCallback onPressed,
+      {Color? color}) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: color ?? Colors.blue,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        elevation: 2,
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget mobileHome(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Colors.blue),
+            child: Text('Menu'),
+          ),
+          ListTile(
+            title: const Text('Products'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductsList()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Sells'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SellingForm(
+                        //userId: 0,
+                        )),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Users'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UsersList()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Selling points'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SellingPointsList()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Logout'),
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double currentWidth = MediaQuery.of(context).size.width;
+    double currentheight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 238, 237, 237),
+      appBar: currentWidth < tabletWidth
+          ? AppBar(
+              title: const Text(
+                'YEREMIYA PHARMACY',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.blue),
+              ),
+              leading: Builder(builder: (context) {
+                return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: const Icon(Icons.menu_outlined));
+              }),
+              backgroundColor: const Color.fromARGB(255, 238, 237, 237),
+            )
+          : null,
+      drawer: currentWidth < tabletWidth ? widget.mobileHome(context) : null,
+      body: Stack(
+        children: [
+          Positioned.fill(
+              child: Center(
+            child: Opacity(
+              opacity: 0.2,
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: Image.asset(
+                  'assets/logo-no-background.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          )),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+            child: Column(
+              children: [
+                if (currentWidth >= tabletWidth) widget.desktopHome(context),
+                const Text(
+                  'Available products',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Color.fromARGB(255, 71, 69, 69)),
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: currentWidth < mobileWidth
+                          ? 3
+                          : currentWidth < tabletWidth
+                              ? 5
+                              : 8,
+                      crossAxisSpacing: currentWidth < mobileWidth
+                          ? 10
+                          : currentWidth < tabletWidth
+                              ? 20
+                              : 10,
+                      mainAxisSpacing: currentWidth < mobileWidth
+                          ? 10
+                          : currentWidth < tabletWidth
+                              ? 15
+                              : 25,
+                      childAspectRatio: currentWidth < mobileWidth
+                          ? 0.75
+                          : currentWidth < tabletWidth
+                              ? 0.70
+                              : 0.6,
+                    ),
+                    itemCount: 100,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Image.asset(
+                                  'assets/professional-medical-doctor-hand-giving-medicine-photo.jpg',
+                                  width: 90,
+                                  height: 90,
+                                ),
+                              ),
+                              const Text(
+                                'name',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Prix:',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  Text(
+                                    '000.00',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:le_coin_des_cuisiniers_app/components/search_textfields.dart';
+import 'package:le_coin_des_cuisiniers_app/components/text_hearder.dart';
+import 'package:le_coin_des_cuisiniers_app/controller/product_controller.dart';
+import 'package:le_coin_des_cuisiniers_app/models/products.dart';
+import 'package:le_coin_des_cuisiniers_app/views/product/add_product.dart';
+import 'package:le_coin_des_cuisiniers_app/views/product/products_list.dart';
+import 'package:le_coin_des_cuisiniers_app/views/transactions/add_transactions.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    getProductLists();
+  }
+
+  List<Product> productsList = [];
+  List<Product> filteredProductsList = [];
+  TextEditingController searchController = TextEditingController();
+  Future<List<Product>> getProductLists() async {
+    productsList = await ProductController().getProducts(context);
+    filteredProductsList = productsList;
+    setState(() {});
+    return productsList;
+  }
+
+  void filterProducts(String query) {
+    final filtered = productsList.where((product) {
+      final productName = product.productName?.toLowerCase() ?? '';
+      final input = query.toLowerCase();
+      return productName.contains(input);
+    }).toList();
+
+    setState(() {
+      filteredProductsList = filtered;
+    });
+  }
+
+  Widget dataTable() {
+    final columns = [
+      'Nom du produit',
+      'Prix de vente',
+      'Marque',
+      'Quantité restante'
+    ];
+    return DataTable(
+      columns: getColumns(columns),
+      rows: getRows(filteredProductsList),
+    );
+  }
+
+  List<DataColumn> getColumns(List<String> columns) {
+    return columns
+        .map((String column) => DataColumn(
+              label: Text(column),
+            ))
+        .toList();
+  }
+
+  List<DataRow> getRows(List<Product> productsList) {
+    return productsList.map((Product product) {
+      return DataRow(cells: [
+        DataCell(Text(product.productName!)),
+        DataCell(Text(product.sellingPrice.toString())),
+        DataCell(Text(product.brand!)),
+        DataCell(Text(product.remainingQuantity.toString())),
+      ]);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: MyTextHeader(content: 'Le coin des cuisiniers'),
+          backgroundColor: Colors.white,
+          bottom: const TabBar(
+            indicatorColor: Color.fromARGB(255, 70, 103, 71),
+            tabs: [
+              Tab(icon: Icon(Icons.home), text: 'Home'),
+              Tab(icon: Icon(Icons.category), text: 'Produits'),
+              Tab(icon: Icon(Icons.settings), text: 'Page des ventes'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            HomeContent(
+              searchController: searchController,
+              filterProducts: filterProducts,
+              dataTable: dataTable,
+            ),
+            // const PlaceholderPage('Produits'),
+            const ProductsList(),
+            // const PlaceholderPage('Page des ventes'),
+            const AddTransaction()
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HomeContent extends StatelessWidget {
+  final TextEditingController searchController;
+  final Function(String) filterProducts;
+  final Widget Function() dataTable;
+
+  const HomeContent({
+    super.key,
+    required this.searchController,
+    required this.filterProducts,
+    required this.dataTable,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // MyTextContent(content: 'Liste des produits disponible'),
+        SizedBox(
+          width: 300,
+          child: MySearchTextField(
+            onChanged: filterProducts,
+            controller: searchController,
+            enabled: true,
+            hintText: 'Chercher un produit',
+            obscureText: false,
+            prefixIcon: Icons.search,
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: dataTable(),
+        ),
+      ],
+    );
+  }
+}
+
+class PlaceholderPage extends StatelessWidget {
+  final String title;
+  const PlaceholderPage(this.title, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        '$title Page',
+        style: const TextStyle(fontSize: 24),
+      ),
+    );
+  }
+}
